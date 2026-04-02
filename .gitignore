@@ -1,0 +1,15 @@
+**pycache**/
+*.pyc
+
+build/
+dist/
+
+venv/
+.venv/
+
+.vscode/
+
+*.log
+
+hashes.txt
+wordlist.txt
