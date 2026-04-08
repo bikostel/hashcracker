@@ -5,8 +5,9 @@ __pycache__/
 *.pyd
 .Python
 build/
+dist/*
+!dist/HashCracker.exe
 develop-eggs/
-dist/
 downloads/
 eggs/
 .eggs/
@@ -22,6 +23,7 @@ wheels/
 
 # PyInstaller
 *.spec
+!HashCracker.spec
 *.manifest
 
 # IDE
