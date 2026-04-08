@@ -2,6 +2,8 @@
 import hashlib
 import threading
 from queue import Queue, Empty
+import itertools
+import string
 
 class MD5Cracker:
 
@@ -128,4 +130,75 @@ class MD5Cracker:
     
     def stop(self):
 
+        self.stop_flag = True
+
+
+        # ============================================================================
+# FUERZA BRUTA: Generar combinaciones y compararlas con hashes objetivo
+# ============================================================================
+
+import itertools
+import string
+
+class BruteForceCracker:
+    def __init__(self, target_hashes, charset='abcdefghijklmnopqrstuvwxyz', max_length=6):
+     
+        self.target_hashes = {h.lower().strip() for h in target_hashes if h.strip()}
+        self.charset = charset
+        self.max_length = max_length
+        self.results = {}  # {hash: password}
+        self.stop_flag = False
+        self.progress_callback = None
+        self.processed = 0
+        self.found = 0
+        self.total_combinations = self._calculate_total()
+    
+    def set_progress_callback(self, callback):
+  
+        self.progress_callback = callback
+    
+    def _calculate_total(self):
+      
+        charset_len = len(self.charset)
+        total = 0
+        for length in range(1, self.max_length + 1):
+            total += charset_len ** length
+        return total
+    
+    def crack(self, num_threads=2):
+       
+        self.stop_flag = False
+        self.processed = 0
+        self.found = 0
+        
+        # Generar y procesar combinaciones de todas las longitudes
+        for length in range(1, self.max_length + 1):
+            if self.stop_flag:
+                break
+            
+            # itertools.product genera TODAS las combinaciones
+            for combination in itertools.product(self.charset, repeat=length):
+                if self.stop_flag:
+                    break
+                
+                # Convertir tupla ('a', 'b') a string 'ab'
+                word = ''.join(combination)
+                
+                # Calcular MD5
+                md5_hash = hashlib.md5(word.encode('utf-8')).hexdigest()
+                
+                # ¿Coincide con algún objetivo?
+                if md5_hash in self.target_hashes:
+                    self.results[md5_hash] = word
+                    self.found += 1
+                
+                # Actualizar progreso cada 10000 combinaciones
+                self.processed += 1
+                if self.progress_callback and self.processed % 10000 == 0:
+                    self.progress_callback(self.processed, self.total_combinations, self.found)
+        
+        return self.results
+    
+    def stop(self):
+        """Detiene la búsqueda"""
         self.stop_flag = True
