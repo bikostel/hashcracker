@@ -11,6 +11,6 @@ PyInstaller.__main__.run([
     '--clean',
 ])
 
-print("\n✅ Ejecutable generado en: dist/HashCracker.exe")
+print("\n[OK] Ejecutable generado en: dist/HashCracker.exe")
 print("   Tamaño: ~20-30 MB")
 print("   Funciona en: Windows XP, Vista, 7, 8, 10, 11")
